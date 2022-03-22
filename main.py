@@ -21,7 +21,7 @@ def mov_avg(data, window):
     return ma_data
 
 
-def main(file_env_path, train=True, best_weight_path="best_weights/"):
+def main(file_env_path, train=True, n_episodes=1000, best_weight_path="best_weights/"):
 
     # Define the device to run the code into: GPU when available, CPU otherwise
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -33,9 +33,7 @@ def main(file_env_path, train=True, best_weight_path="best_weights/"):
     gamma = 0.99
 
     # Set number of episodes
-    if train:
-        n_episodes = 1000
-    else:
+    if not train:
         n_episodes = 1
 
     # Set timeout
@@ -121,9 +119,11 @@ def main(file_env_path, train=True, best_weight_path="best_weights/"):
                 best_score = avg_score
 
     if train:
+
         with open("scores_list.csv", 'w') as f:
             for s in scores_list:
                 f.write(str(s) + ',')
+
         # Average all scores
         window_avg = score_window_size
         ma_data = mov_avg(scores_list, window_avg)
@@ -131,7 +131,8 @@ def main(file_env_path, train=True, best_weight_path="best_weights/"):
         plt.plot(scores_list, alpha=0.5)
         plt.plot(ma_data, alpha=1)
         plt.ylabel('Rewards')
-        
+        plt.savefig("img/p3_collab_compet.jpg")
+
         plt.show()
 
 
@@ -148,7 +149,7 @@ if __name__ == "__main__":
     #         main(file_env_path="Tennis_Linux/Tennis.x86_64", train=False)
     #     elif sys.argv[1] == "--training":
     #         main(file_env_path="Tennis_Linux/Tennis.x86_64", train=True)
-    main(file_env_path="Tennis_Linux/Tennis.x86_64", train=True)
+    main(file_env_path="Tennis_Linux/Tennis.x86_64", n_episodes=1000, train=True)
 
 
 
