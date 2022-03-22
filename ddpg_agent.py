@@ -8,11 +8,12 @@ import numpy as np
 
 
 class DDPQAgent():
-    def __init__(self, gamma, state_size, action_size, device, actor_lr=1e-4, critic_lr=1e-3, replay_buffer_size=int(1e6), batch_size=128, polyak=0.85, target_update=1, learn_iter=5):
+    def __init__(self, gamma, state_size, action_size, device, actor_lr=1e-4, critic_lr=1e-3, replay_buffer_size=int(1e6), batch_size=128, polyak=0.85, target_update=1, learn_iter=5, name="ddpg"):
         self.gamma = gamma
         self.action_size = action_size
         self.device = device
         self.polyak = polyak
+        self.name = name
 
         # Actor
         self.actor_target = ActorNetwork(state_size, action_size, hidden_layers=(300, 400)).to(device)
@@ -121,12 +122,12 @@ class DDPQAgent():
                     self.learn(experiences)
 
     def save(self, weight_path):
-        torch.save(self.actor_target.state_dict(), weight_path[:-3] + "_actor.pt")
-        torch.save(self.critic_target.state_dict(), weight_path[:-3] + "_critic.pt")
+        torch.save(self.actor_target.state_dict(), weight_path + weight_path[:-3] + "_actor_" + self.name + ".pt")
+        torch.save(self.critic_target.state_dict(), weight_path + weight_path[:-3] + "_critic_" + self.name + ".pt")
 
     def load(self, weight_path):
-        self.actor_target.load_state_dict(torch.load(weight_path + "best_weight_actor.pt"))
-        self.actor_local.load_state_dict(torch.load(weight_path + "best_weight_actor.pt"))
-        self.critic_target.load_state_dict(torch.load(weight_path + "best_weight_critic.pt"))
-        self.critic_local.load_state_dict(torch.load(weight_path + "best_weight_critic.pt"))
+        self.actor_target.load_state_dict(torch.load(weight_path + "best_weight_actor_" + self.name + ".pt"))
+        self.actor_local.load_state_dict(torch.load(weight_path + "best_weight_actor_" + self.name + ".pt"))
+        self.critic_target.load_state_dict(torch.load(weight_path + "best_weight_critic_" + self.name + ".pt"))
+        self.critic_local.load_state_dict(torch.load(weight_path + "best_weight_critic_" + self.name + ".pt"))
 

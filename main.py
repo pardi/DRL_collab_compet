@@ -10,7 +10,7 @@ import sys
 
 
 def mov_avg(data, window):
-    v = deque([] * window)
+    v = deque(maxlen=window)
 
     ma_data = []
 
@@ -34,7 +34,7 @@ def main(file_env_path, train=True, best_weight_path="best_weights/"):
 
     # Set number of episodes
     if train:
-        n_episodes = 300
+        n_episodes = 1000
     else:
         n_episodes = 1
 
@@ -47,8 +47,8 @@ def main(file_env_path, train=True, best_weight_path="best_weights/"):
     solved_flag = False
 
     # Create agent
-    agents = [DDPQAgent(gamma, env.state_size, env.action_size, device),
-              DDPQAgent(gamma, env.state_size, env.action_size, device)]
+    agents = [DDPQAgent(gamma, env.state_size, env.action_size, device, name="agent1"),
+              DDPQAgent(gamma, env.state_size, env.action_size, device, name="agent2")]
 
     if not train:
         for agent in agents:
@@ -110,13 +110,18 @@ def main(file_env_path, train=True, best_weight_path="best_weights/"):
             if avg_score >= final_score and avg_score > best_score:
                 print('\nEnvironment solved in {:d} episodes!'.format(episode))
                 solved_flag = True
+                best_score = avg_score
 
-            if solved_flag:
+            if solved_flag and avg_score > best_score:
                 print('Saved better solution! Average Score: {:.2f}'.format(avg_score))
                 for agent in agents:
                     agent.save(best_weight_path)
+                best_score = avg_score
 
     if train:
+        with open("scores_list.csv", 'w') as f:
+            for s in scores_list:
+                f.write(str(s) + ',')
         # Average all scores
         window_avg = score_window_size
         ma_data = mov_avg(scores_list, window_avg)
