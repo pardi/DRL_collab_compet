@@ -28,7 +28,8 @@ class ActorNetwork(nn.Module):
         self.fc2.weight.data.uniform_(*self.param_init_fcn(self.fc2))
         self.fc3.weight.data.uniform_(-3e-3, 3e-3)
 
-    def param_init_fcn(self, layer):
+    @staticmethod
+    def param_init_fcn(layer):
         f_in = layer.weight.data.size()[0]
         lm = 1. / np.sqrt(f_in)
         return (-lm, lm)
@@ -57,7 +58,8 @@ class CriticNetwork(nn.Module):
         self.fc2.weight.data.uniform_(*self.param_init_fcn(self.fc2))
         self.fc3.weight.data.uniform_(-3e-3, 3e-3)
 
-    def param_init_fcn(self, layer):
+    @staticmethod
+    def param_init_fcn(layer):
         f_in = layer.weight.data.size()[0]
         lm = 1. / np.sqrt(f_in)
         return (-lm, lm)

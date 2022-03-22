@@ -107,7 +107,8 @@ def main(file_env_path, train=True, best_weight_path="best_weights/"):
         # Check if we hit the final score
         if train:
             avg_score = np.mean(np.array(scores_list[-score_window_size:]))
-            if avg_score >= final_score and avg_score > best_score:
+
+            if avg_score >= final_score and not solved_flag:
                 print('\nEnvironment solved in {:d} episodes!'.format(episode))
                 solved_flag = True
                 best_score = avg_score
@@ -116,6 +117,7 @@ def main(file_env_path, train=True, best_weight_path="best_weights/"):
                 print('Saved better solution! Average Score: {:.2f}'.format(avg_score))
                 for agent in agents:
                     agent.save(best_weight_path)
+
                 best_score = avg_score
 
     if train:
