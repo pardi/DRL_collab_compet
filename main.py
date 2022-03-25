@@ -140,16 +140,21 @@ if __name__ == "__main__":
     # Set training:
     #   True - for training
     #   False - for executing best weight (when present)
-    # if len(sys.argv) < 2:
-    #     print("Input not recognised!")
-    #     print("Usage: --no_training : run a single episode\n"
-    #           "       --training : train the algorithm for 2k episodes")
-    # else:
-    #     if sys.argv[1] == "--no_training":
-    #         main(file_env_path="Tennis_Linux/Tennis.x86_64", train=False)
-    #     elif sys.argv[1] == "--training":
-    #         main(file_env_path="Tennis_Linux/Tennis.x86_64", train=True)
-    main(file_env_path="Tennis_Linux/Tennis.x86_64", n_episodes=1000, train=True)
+    if len(sys.argv) < 2:
+        print("Input not recognised!")
+        print("Usage: --no_training : run a single episode\n"
+              "       --training N : with N number of episodes; if no number is provided, it trains the algorithm for "
+              "1k episodes")
+    else:
+        if sys.argv[1] == "--no_training":
+            main(file_env_path="Tennis_Linux/Tennis.x86_64", train=False)
+        elif sys.argv[1] == "--training":
+            if len(sys.argv) == 2:
+                n_episodes = 1000
+            else:
+                n_episodes = int(sys.argv[2])
+
+            main(file_env_path="Tennis_Linux/Tennis.x86_64", n_episodes=n_episodes, train=True)
 
 
 
